@@ -7,7 +7,7 @@ export default function LandingPage() {
       <Link href='/sign-in' className={buttonVariants()}>
         Sign In
       </Link>
-      <Link href='/sign-in' className={buttonVariants()}>
+      <Link href='/sign-up' className={buttonVariants()}>
         Sign Up
       </Link>
     </div>
