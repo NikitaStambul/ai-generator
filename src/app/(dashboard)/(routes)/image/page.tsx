@@ -23,12 +23,13 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/Form';
 import { amountOptions, formSchema, resolutionOptions } from './constants';
-import { cn } from '@/lib/utils';
 import { Card, CardFooter } from '@/components/ui/Card';
 import Image from 'next/image';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 export default function ImagePage() {
   const router = useRouter();
+  const proModal = useProModal();
   const [images, setImages] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,9 +53,10 @@ export default function ImagePage() {
 
       setImages(urls);
       form.reset();
-    } catch (error) {
-      // TODO: Open Pro Modal
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }

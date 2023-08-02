@@ -21,9 +21,11 @@ import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/Form';
 import { formSchema } from './constants';
 import { cn } from '@/lib/utils';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 export default function CodePage() {
   const router = useRouter();
+  const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,9 +52,10 @@ export default function CodePage() {
       setMessages((current) => [...current, userMessage, response.data]);
 
       form.reset();
-    } catch (error) {
-      // TODO: Open Pro Modal
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
@@ -130,7 +133,7 @@ export default function CodePage() {
                       <code className="bg-black/10 rounded-lg p-1" {...props} />
                     ),
                   }}
-                  className='text-sm overflow-hidden leading-7'
+                  className="text-sm overflow-hidden leading-7"
                 >
                   {message.content || ''}
                 </ReactMarkdown>

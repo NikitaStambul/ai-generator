@@ -16,10 +16,11 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/Form';
 import { formSchema } from './constants';
-import { cn } from '@/lib/utils';
+import { useProModal } from '@/hooks/use-pro-modal';
 
 export default function MusicPage() {
   const router = useRouter();
+  const proModal = useProModal();
   const [music, setMusic] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,9 +40,10 @@ export default function MusicPage() {
 
       setMusic(response.data.audio);
       form.reset();
-    } catch (error) {
-      // TODO: Open Pro Modal
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
